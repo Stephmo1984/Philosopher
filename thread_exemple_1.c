@@ -5,7 +5,8 @@
 pthread_mutex_t mutex;
 int counter = 0;
 
-void *increment_counter(void *thread_id) {
+void *increment_counter(void *thread_id) 
+{
     long tid = (long)thread_id;
     
     // Verrouiller le mutex avant de modifier le compteur
@@ -18,7 +19,8 @@ void *increment_counter(void *thread_id) {
     pthread_exit(NULL);
 }
 
-int main() {
+int main() 
+{
     pthread_t threads[5];
     int rc;
     long t;
@@ -26,17 +28,20 @@ int main() {
     // Initialiser le mutex
     pthread_mutex_init(&mutex, NULL);
     
-    for (t = 0; t < 5; t++) {
+    for (t = 0; t < 5; t++) 
+    {
         printf("Creating thread %ld\n", t);
         rc = pthread_create(&threads[t], NULL, increment_counter, (void *)t);
         
-        if (rc) {
+        if (rc) 
+        {
             printf("ERROR; return code from pthread_create() is %d\n", rc);
             exit(-1);
         }
     }
     
-    for (t = 0; t < 5; t++) {
+    for (t = 0; t < 5; t++) 
+    {
         pthread_join(threads[t], NULL);
     }
     
