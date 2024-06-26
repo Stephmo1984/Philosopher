@@ -43,7 +43,6 @@ void	*philo_do(void *num)
 	pthread_mutex_unlock(&mutex[i]);
 	printf("Philo %ld libere fourchette %ld\n", i, i);
 	
-
 	pthread_exit(NULL); //???
 }
 
