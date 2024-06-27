@@ -6,7 +6,7 @@
 /*   By: smortemo <smortemo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 18:30:39 by smortemo          #+#    #+#             */
-/*   Updated: 2024/06/26 19:31:33 by smortemo         ###   ########.fr       */
+/*   Updated: 2024/06/27 16:00:23 by smortemo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ struct s_data{
 	int t_eat;
 	int t_sleep;
 	int nbr_meals;
+	pthread_mutex_t mtx_print;
 	pthread_mutex_t *forks;
 };
 

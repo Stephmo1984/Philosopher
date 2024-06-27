@@ -13,11 +13,12 @@ void* philosopher(void* num) {
     int left = id;
     int right = (id + 1) % NUM_PHILOSOPHERS;
 
-    while (1) {
-        printf("Philosopher %d is thinking.\n", id);
-        sleep(rand() % 2);
+    // while (1) {
 
-        printf("Philosopher %d is hungry.\n", id);
+        printf("Philosopher %d is thinking.\n", id);
+        // sleep(rand() % 2);
+
+        // printf("Philosopher %d is hungry.\n", id);
 
         // Pick up left fork
         pthread_mutex_lock(&forks[left]);
@@ -38,7 +39,10 @@ void* philosopher(void* num) {
         // Put down left fork
         pthread_mutex_unlock(&forks[left]);
         printf("Philosopher %d put down left fork %d.\n", id, left);
-    }
+    // }
+
+	pthread_exit(NULL); //???
+
 }
 
 int main() {
