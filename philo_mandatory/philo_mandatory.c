@@ -6,11 +6,25 @@
 /*   By: smortemo <smortemo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 18:12:56 by smortemo          #+#    #+#             */
-/*   Updated: 2024/06/27 18:02:27 by smortemo         ###   ########.fr       */
+/*   Updated: 2024/06/28 16:30:25 by smortemo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "struct.h"
+
+
+unsigned long	get_time_millisec(void)
+{
+	struct timeval time;
+	unsigned long time_usec;
+	
+	gettimeofday(&time, NULL);
+	
+	time_usec = ((time.tv_sec * 1000000) + time.tv_usec);
+	return (time_usec / 1000);
+}
+
+
 
 void	print_philo(t_philo_thread *thread_n, int n, pthread_mutex_t *forks)
 {
@@ -33,32 +47,33 @@ void	*philo_do(void *thread_philo_n)
 	t_philo_thread *thread_n;
 	int n;
 	pthread_mutex_t *forks;
+	int counter_meals;
 
 	thread_n = (t_philo_thread *) thread_philo_n;
 	n = thread_n->phi_num;
 	forks = thread_n->data->forks;
+	counter_meals = thread_n->data->nbr_meals;
+	
+	// printf("***TIME**** DATA_START = %li\n", thread_n->data->start);
+	thread_n->last_meal = thread_n->data->start;
 	
 	// int time_death = thread_n->data->t_death;
 	int time_eat = thread_n->data->t_eat;
 	int time_sleep = thread_n->data->t_sleep;
 	int meals = thread_n->data->nbr_meals;
-
 	
 	int l = n - 1;
     int r =  n % thread_n->data->nbr_phi;
 
-	// if(n % 2 != 0)
-	// 	usleep(500);
-	
-
 	// https://www.delftstack.com/fr/howto/c/gettimeofday-in-c/
-	while(meals != 0)
+	while(counter_meals != 0)
 	{
 		if (n % 2 == 0)
 		{
 			pthread_mutex_lock(&thread_n->data->mtx_print);
 			write(1,"--------------\n", 15);
-			
+			if(counter_meals == thread_n->data->nbr_meals)
+				printf("PHILO %d ***TIME**** LAST_MEAL_INIT = %li\n --------------\n", n, thread_n->last_meal);
 			printf("Philosopher %d is thinking.\n", n);
 			
 			pthread_mutex_lock(&forks[l]);
@@ -68,7 +83,11 @@ void	*philo_do(void *thread_philo_n)
 			printf("Philosopher %d picked R fork (%i) %p.\n", n, n-1, &forks[r]);
 			
 			printf("Philosopher %d is eating.\n", n);
+			
+			thread_n->start_meal = get_time_millisec();
+			printf("***TIME PHILO_START_MEAL from last meal****  = %li\n", thread_n->start_meal - thread_n->last_meal);
 			usleep(time_eat);
+			thread_n->last_meal = thread_n->start_meal;
 			
 			pthread_mutex_unlock(&forks[r]);
 			printf("Philosopher %d put down R fork (%i) %p.\n", n, n - 1, &forks[r]);
@@ -76,7 +95,7 @@ void	*philo_do(void *thread_philo_n)
 			pthread_mutex_unlock(&forks[l]);
 			printf("Philosopher %d put down L fork (%i) %p.\n", n, n, &forks[l]);
 			
-			meals--;
+			counter_meals--;
 
 			printf("Philosopher %d is sleeping.\n", n);
 			usleep(time_sleep);
@@ -87,7 +106,9 @@ void	*philo_do(void *thread_philo_n)
 		{
 			pthread_mutex_lock(&thread_n->data->mtx_print);
 			write(1,"--------------\n", 15);
-			
+			if(counter_meals == thread_n->data->nbr_meals)
+				printf("/////////////// PHILO %d ***TIME**** LAST_MEAL_INIT = %li\n --------------\n", n, thread_n->last_meal);
+
 			printf("Philosopher %d is thinking.\n", n);
 			
 			pthread_mutex_lock(&forks[r]);
@@ -96,10 +117,12 @@ void	*philo_do(void *thread_philo_n)
 			pthread_mutex_lock(&forks[l]);
 			printf("Philosopher %d picked L fork (%i) %p.\n", n, n, &forks[l]);
 
-		
-			
 			printf("Philosopher %d is eating.\n", n);
+						
+			thread_n->start_meal = get_time_millisec();
+			printf("***TIME PHILO_START_MEAL from last meal**** = %li\n", thread_n->start_meal - thread_n->last_meal);
 			usleep(time_eat);
+			thread_n->last_meal = thread_n->start_meal;
 			
 			pthread_mutex_unlock(&forks[l]);
 			printf("Philosopher %d put down L fork (%i) %p.\n", n, n, &forks[l]);
@@ -107,29 +130,28 @@ void	*philo_do(void *thread_philo_n)
 			pthread_mutex_unlock(&forks[r]);
 			printf("Philosopher %d put down R fork (%i) %p.\n", n, n - 1, &forks[r]);
 
-			
-			meals--;
+			counter_meals--;
 
 			printf("Philosopher %d is sleeping.\n", n);
 			usleep(time_sleep);
 
 			pthread_mutex_unlock(&thread_n->data->mtx_print);
 		}
-		
 	}
 	pthread_exit(NULL); //???
 }
+
 
 void init_data(t_data *data)
 {
 	data->nbr_phi = 5;
 	// data.t_death = 1200;
-	data->t_eat= 200;
-	data->t_sleep = 200;
+	data->t_eat= 5000;
+	data->t_sleep = 5000;
 	data->nbr_meals = 2;
 	data->forks = malloc(sizeof(pthread_mutex_t) * data->nbr_phi);
+	data->start = get_time_millisec();
 }
-
 
 int main() 
 {
@@ -156,6 +178,7 @@ int main()
 	{
 		threads[i].phi_num = i + 1;
 		threads[i].data = &data;
+		threads[i].counter_meals_eaten = data.nbr_meals;
 		ret = pthread_create(&threads[i].thread_id, NULL, philo_do, (void *) &threads[i]);
 		if (ret)
 		{
