@@ -37,5 +37,7 @@ struct s_philo_thread{
 	int 			counter_meals_eaten;
 	unsigned long	last_meal;
 	unsigned long	start_meal;
+	pthread_mutex_t mtx_print_philo;
+
 	// unsigned long	start_sleep;
 };

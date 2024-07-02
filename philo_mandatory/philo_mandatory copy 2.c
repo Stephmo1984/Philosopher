@@ -55,12 +55,12 @@ unsigned long	get_timestamp_millisec(unsigned long start_milli)
 // }
 
 
-void	print_philo(pthread_mutex_t *mtx_print, int n, long long start, char *str)
+void	print_philo(t_philo_thread *thread_n, int n)
 {
-	pthread_mutex_lock(mtx_print);
-	printf("[%li]  ", get_timestamp_millisec(start));
-	printf("P%d %s\n", n, str);
-	pthread_mutex_unlock(mtx_print);
+	pthread_mutex_lock(&thread_n->data->mtx_print);
+	printf("[%li]  ", get_timestamp_millisec(start_simu));
+	printf("P%d has taken fork (%i).\n", n);
+	pthread_mutex_unlock(&thread_n->data->mtx_print);
 }
 
 
@@ -89,29 +89,34 @@ void	*philo_do(void *thread_philo_n)
     int r =  n % thread_n->data->nbr_phi;
 
 	// https://www.delftstack.com/fr/howto/c/gettimeofday-in-c/
-	while(counter_meals != 0)
-	// while(1)
+	// while(counter_meals != 0)
+	while(1)
 	{
 		if (n % 2 == 0)
 		{
 			pthread_mutex_lock(&forks[l]);
-			print_philo(&thread_n->data->mtx_print, n, start_simu, " has taken a fork");
+			
+			pthread_mutex_lock(&thread_n->data->mtx_print);
+			printf("[%li]  ", get_timestamp_millisec(start_simu));
+			printf("P%d has taken L fork (%i).\n", n, n);
+			pthread_mutex_unlock(&thread_n->data->mtx_print);
 
 			pthread_mutex_lock(&forks[r]);
-			print_philo(&thread_n->data->mtx_print, n, start_simu, " has taken a fork");
 
+			pthread_mutex_lock(&thread_n->data->mtx_print);
+			printf("[%li]  ", get_timestamp_millisec(start_simu)); 
+			printf("P%d has taken R fork (%i).\n", n, n-1);
 			thread_n->start_meal = get_time_millisec();
 			if ((thread_n->start_meal - thread_n->last_meal) >= time_death)
 			{
-				pthread_mutex_lock(&thread_n->data->mtx_print);
 				printf("XXXXXXXXXXXXXXXXXX PHILO %d *** XXXX DEAD XXXXX **** \n", n);
-				pthread_mutex_unlock(&thread_n->data->mtx_print);
 				free(thread_n);
 				free(thread_n->data->forks);
 				exit(-1);
 			}
-
-			print_philo(&thread_n->data->mtx_print, n, start_simu, " is eating");
+			printf("[%li]  ", get_timestamp_millisec(start_simu));
+			printf("P%d is eating.\n", n);
+			pthread_mutex_unlock(&thread_n->data->mtx_print);
 
 			usleep(time_eat);
 			thread_n->last_meal = thread_n->start_meal;
@@ -120,31 +125,44 @@ void	*philo_do(void *thread_philo_n)
 
 			counter_meals--;
 
-			print_philo(&thread_n->data->mtx_print, n, start_simu, " is sleeping");
+			pthread_mutex_lock(&thread_n->data->mtx_print);
+			printf("[%li]  ", get_timestamp_millisec(start_simu));
+			printf("P%d is sleeping.\n", n);
+			pthread_mutex_unlock(&thread_n->data->mtx_print);
 
 			usleep(time_sleep);
 
-			print_philo(&thread_n->data->mtx_print, n, start_simu, " is thinking");
-
+			pthread_mutex_lock(&thread_n->data->mtx_print);
+			printf("[%li]  ", get_timestamp_millisec(start_simu));
+			printf("P%d is thinking.\n", n);
+			pthread_mutex_unlock(&thread_n->data->mtx_print);
 		}
 		else if (n % 2 != 0)
 		{
 			pthread_mutex_lock(&forks[r]);
 
-			print_philo(&thread_n->data->mtx_print, n, start_simu, " has taken a fork");
-			
-			print_philo(&thread_n->data->mtx_print, n, start_simu, " has taken a fork");
+			pthread_mutex_lock(&thread_n->data->mtx_print);
+			printf("[%li]  ", get_timestamp_millisec(start_simu));
+			printf("P%d has taken R fork (%i).\n", n, n-1);
+			pthread_mutex_unlock(&thread_n->data->mtx_print);
+
+			pthread_mutex_lock(&thread_n->data->mtx_print);
+			pthread_mutex_lock(&forks[l]);
+			printf("[%li]  ", get_timestamp_millisec(start_simu));
+			printf("P%d has taken L fork (%i).\n", n, n);
+			pthread_mutex_unlock(&thread_n->data->mtx_print);
 
 			thread_n->start_meal = get_time_millisec();
 
+			pthread_mutex_lock(&thread_n->data->mtx_print);
 			if ((thread_n->start_meal - thread_n->last_meal) >= time_death)
 			{
-				pthread_mutex_lock(&thread_n->data->mtx_print);
 				printf("XXXXXXXXXXXXXXXXXX PHILO %d *** XXXX DEAD XXXXX **** \n", n);
-				pthread_mutex_unlock(&thread_n->data->mtx_print);
 				exit (-1);
 			}
-			print_philo(&thread_n->data->mtx_print, n, start_simu, " is eating");
+			printf("[%li]  ", get_timestamp_millisec(start_simu));
+			printf("P%d is eating.\n", n);
+			pthread_mutex_unlock(&thread_n->data->mtx_print);
 
 			usleep(time_eat);
 			thread_n->last_meal = thread_n->start_meal;
@@ -152,11 +170,17 @@ void	*philo_do(void *thread_philo_n)
 			pthread_mutex_unlock(&forks[r]);
 			counter_meals--;
 
-			print_philo(&thread_n->data->mtx_print, n, start_simu, " is sleeping");
+			pthread_mutex_lock(&thread_n->data->mtx_print);
+			printf("[%li]  ", get_timestamp_millisec(start_simu));
+			printf("P%d is sleeping.\n", n);
+			pthread_mutex_unlock(&thread_n->data->mtx_print);
 
 			usleep(time_sleep);
 
-			print_philo(&thread_n->data->mtx_print, n, start_simu, " is thinking");
+			pthread_mutex_lock(&thread_n->data->mtx_print);
+			printf("[%li]  ", get_timestamp_millisec(start_simu));
+			printf("P%d is thinking.\n", n);
+			pthread_mutex_unlock(&thread_n->data->mtx_print);
 		}
 	}
 	return (NULL);
@@ -166,10 +190,10 @@ void	*philo_do(void *thread_philo_n)
 void init_data(t_data *data)
 {
 	data->nbr_phi = 5;
-	data->t_death = 800;
-	data->t_eat= 200;
-	data->t_sleep = 200;
-	data->nbr_meals = 150;
+	data->t_death = 8000;
+	data->t_eat= 2000;
+	data->t_sleep = 2000;
+	data->nbr_meals = 100;
 	data->forks = malloc(sizeof(pthread_mutex_t) * data->nbr_phi);
 	data->start = get_time_millisec();
 }
