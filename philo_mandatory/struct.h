@@ -6,9 +6,12 @@
 /*   By: smortemo <smortemo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 18:30:39 by smortemo          #+#    #+#             */
-/*   Updated: 2024/07/03 16:49:56 by smortemo         ###   ########.fr       */
+/*   Updated: 2024/07/03 17:34:54 by smortemo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#ifndef STRUCT_H
+# define STRUCT_H
 
 # include <stdio.h>
 # include <pthread.h>
@@ -19,6 +22,14 @@
 typedef struct s_philo_thread t_philo_thread;
 typedef struct s_data t_data;
 
+typedef unsigned char		t_bool; // ?
+
+# ifndef TRUE
+#  define TRUE 1
+# endif
+# ifndef FALSE
+#  define FALSE 0
+#endif
 struct s_data{
 	int nbr_phi;
 	int t_death;
@@ -37,9 +48,12 @@ struct s_philo_thread{
 	int 			counter_meals_eaten;
 	unsigned long	last_meal;
 	unsigned long	start_meal;
+	t_bool			is_dead;
 };
 
 unsigned long	get_time_millisec(void);
 unsigned long	get_timestamp_millisec(unsigned long start_milli);
 void	print_philo(pthread_mutex_t *mtx_print, int n, long long start, char *str);
 void	init_mutex(t_data *data);
+
+#endif

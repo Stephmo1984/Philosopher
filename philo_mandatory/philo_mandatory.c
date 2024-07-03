@@ -6,7 +6,7 @@
 /*   By: smortemo <smortemo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 18:12:56 by smortemo          #+#    #+#             */
-/*   Updated: 2024/07/03 16:58:54 by smortemo         ###   ########.fr       */
+/*   Updated: 2024/07/03 17:41:21 by smortemo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,8 @@ void	philo_eat(t_philo_thread *thread_n, pthread_mutex_t *forks, int fisrt_fork,
 		pthread_mutex_lock(&thread_n->data->mtx_print);
 		printf("XXXXXXXXXXXXXXXXXX PHILO %d *** XXXX DEAD XXXXX **** \n", thread_n->phi_num);
 		pthread_mutex_unlock(&thread_n->data->mtx_print);
-		// free(thread_n);
-		// free(thread_n->data->forks);
-		exit(-1);// modifier un etat t_bool
+		thread_n->is_dead = TRUE;////// voir fonction set ///
+		// exit(-1);//a enlever
 	}
 	print_philo(&thread_n->data->mtx_print, thread_n->phi_num, thread_n->data->start, " is eating");
 	usleep(thread_n->data->t_eat);
@@ -49,8 +48,8 @@ void	*philo_do(void *thread_philo_n)
 	r =  n % thread_n->data->nbr_phi;
 
 	// https://www.delftstack.com/fr/howto/c/gettimeofday-in-c/
-	// while(counter_meals != 0)
-	while(1)
+	while(counter_meals != 0)
+	// while(1)
 	{
 		if (n % 2 == 0)
 		{
@@ -82,11 +81,11 @@ void	*philo_do(void *thread_philo_n)
 
 void init_data(t_data *data)
 {
-	data->nbr_phi = 4;
-	data->t_death = 210;
-	data->t_eat= 200;
-	data->t_sleep = 100;
-	data->nbr_meals = 15;
+	data->nbr_phi = 5;
+	data->t_death = 1500;
+	data->t_eat= 2000000;
+	data->t_sleep = 1000000;
+	data->nbr_meals = 3;
 	data->forks = malloc(sizeof(pthread_mutex_t) * data->nbr_phi);
 	data->start = get_time_millisec();
 }
@@ -134,7 +133,7 @@ void	join_and_destroy(t_data *data, t_philo_thread *threads)
 
 int main() 
 {
-	int nbr_places = 4;
+	int nbr_places = 5;
 	int i;
     t_philo_thread *threads;
 	t_data data;
@@ -144,6 +143,11 @@ int main()
 	pthread_mutex_init(&data.mtx_print, NULL);
 	init_mutex(&data);
 	init_thread(&data, threads);
+	// while(1)
+	// {
+	
+		
+	// }
 	join_and_destroy(&data, threads);
 	free(threads);
 	free(data.forks);
