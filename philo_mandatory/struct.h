@@ -6,7 +6,7 @@
 /*   By: smortemo <smortemo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 18:30:39 by smortemo          #+#    #+#             */
-/*   Updated: 2024/07/05 19:49:45 by smortemo         ###   ########.fr       */
+/*   Updated: 2024/07/06 20:07:43 by smortemo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,12 @@ struct s_data{
 	unsigned long t_sleep;
 	int nbr_meals;
 	pthread_mutex_t mtx_print;
+	pthread_mutex_t mtx_death;
+	// pthread_mutex_t mtx_time;
+
 	pthread_mutex_t *forks;
 	unsigned long	start;
-	t_bool			is_dead;
-	pthread_t		monitor;
-
+	t_bool			one_dead;
 };
 
 struct s_philo_thread{
@@ -51,9 +52,11 @@ struct s_philo_thread{
 	int 			counter_meals_eaten;
 	unsigned long	last_meal;
 	unsigned long	start_meal;
-	t_bool			*is_dead;
+	unsigned long 	death;
+	unsigned long	start_simu;
+	
+	t_bool			*one_dead;
 	t_bool			is_full;
-	pthread_t		philo_monitor;
 };
 
 unsigned long	get_time_millisec(void);
