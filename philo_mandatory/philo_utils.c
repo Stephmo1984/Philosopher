@@ -6,7 +6,7 @@
 /*   By: smortemo <smortemo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 16:44:59 by smortemo          #+#    #+#             */
-/*   Updated: 2024/07/12 10:45:10 by smortemo         ###   ########.fr       */
+/*   Updated: 2024/07/12 12:49:06 by smortemo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,13 @@ unsigned long	get_timestamp_millisec(unsigned long start_milli)
 	return (time_millisec - start_milli);
 }
 
-void	print_philo(pthread_mutex_t *mtx_print, int n, long long start, char *str)
+void	print_philo(t_philo_thread *thread, pthread_mutex_t *mtx_print, long long start, char *str)
 {
+	if(thread->data->one_dead == TRUE)
+		return ;
 	pthread_mutex_lock(mtx_print);
 	printf("[%li]  ", get_timestamp_millisec(start));
-	printf("P%d %s\n", n, str);
+	printf("P%d %s\n", thread->phi_num, str);
 	pthread_mutex_unlock(mtx_print);
 }
 

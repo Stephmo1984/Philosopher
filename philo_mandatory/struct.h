@@ -6,7 +6,7 @@
 /*   By: smortemo <smortemo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 18:30:39 by smortemo          #+#    #+#             */
-/*   Updated: 2024/07/12 11:30:52 by smortemo         ###   ########.fr       */
+/*   Updated: 2024/07/12 13:06:06 by smortemo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,9 @@ struct s_data{
 	int nbr_meals;
 	pthread_mutex_t mtx_print;
 	pthread_mutex_t mtx_death;
-	// pthread_mutex_t mtx_time;
+	pthread_mutex_t mtx_time;
+	
+	pthread_mutex_t mtx_bool;
 
 	pthread_mutex_t *forks;
 	unsigned long	start;
@@ -65,7 +67,8 @@ struct s_philo_thread{
 
 unsigned long	get_time_millisec(void);
 unsigned long	get_timestamp_millisec(unsigned long start_milli);
-void	print_philo(pthread_mutex_t *mtx_print, int n, long long start, char *str);
+// void	print_philo(pthread_mutex_t *mtx_print, int n, long long start, char *str);
+void	print_philo(t_philo_thread *thread, pthread_mutex_t *mtx_print, long long start, char *str);
 void	init_mutex(t_data *data);
 
 void philo_check_args(char **argv);
