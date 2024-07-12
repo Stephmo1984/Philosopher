@@ -6,7 +6,7 @@
 /*   By: smortemo <smortemo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 18:30:39 by smortemo          #+#    #+#             */
-/*   Updated: 2024/07/12 10:20:27 by smortemo         ###   ########.fr       */
+/*   Updated: 2024/07/12 11:30:52 by smortemo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,8 @@ void	print_philo(pthread_mutex_t *mtx_print, int n, long long start, char *str);
 void	init_mutex(t_data *data);
 
 void philo_check_args(char **argv);
-int	ft_atoi(char *str);
-long long	ft_atol_unsigned(const char *str);
+int	ft_atoi_philo(char *str);
+long long	ft_atol_unsigned_philo(char *str);
 void	exit_error_message(char *str);
 
 #endif

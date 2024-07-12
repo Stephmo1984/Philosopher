@@ -6,7 +6,7 @@
 /*   By: smortemo <smortemo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 18:12:56 by smortemo          #+#    #+#             */
-/*   Updated: 2024/07/12 10:20:54 by smortemo         ###   ########.fr       */
+/*   Updated: 2024/07/12 11:48:34 by smortemo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,14 +84,8 @@ void *philo_is_dead(void *thread_philo)
 				diff = time_stamp - (thread[i].start_meal);//set_get
 				if (diff > death)
 				{
-					// printf("MONITOR TimeStamp= %li\n", time_stamp );
-					// printf("MONITOR thread[i].start_meal= %li\n", thread[i].start_meal );
-					// printf("MONITOR diff = %li\n", diff);
 					print_philo(&thread->data->mtx_print, thread[i].phi_num, thread->data->start, " PHILOSOPHER IS DEAD");	
-					// set_value_bool(&thread->data->mtx_death, thread->data->one_dead, TRUE);
-					// pthread_mutex_lock(&thread->data->mtx_death);
 					thread->data->one_dead = TRUE;
-					// pthread_mutex_unlock(&thread->data->mtx_death);
 					return(NULL);
 				}	
 			}
@@ -201,15 +195,15 @@ void init_data(t_data *data, char **argv)
 
 	data->nbr_meals = 1;
 	data->meals_number = FALSE;
-	data->nbr_phi = ft_atoi(argv[1]);
+	data->nbr_phi = ft_atoi_philo(argv[1]);
 	if (data->nbr_phi > 124098)
-		exit_error_message("too many theads (philosophers)\n"); //         cat /proc/sys/kernel/threads-max       
-	data->t_death =  ft_atol_unsigned(argv[2]);
-	data->t_eat=  ft_atol_unsigned(argv[3]);
-	data->t_sleep =  ft_atol_unsigned(argv[4]);
+		exit_error_message("Too many threads (philosophers) -> to see max threads value: cat /proc/sys/kernel/threads-max\n"); //         cat /proc/sys/kernel/threads-max       
+	data->t_death =  ft_atol_unsigned_philo(argv[2]);
+	data->t_eat=  ft_atol_unsigned_philo(argv[3]);
+	data->t_sleep =  ft_atol_unsigned_philo(argv[4]);
 	if (argv[5])
 	{
-		data->nbr_meals =  ft_atoi(argv[5]);
+		data->nbr_meals =  ft_atoi_philo(argv[5]);
 		data->meals_number = TRUE;
 	}	
 	data->forks = malloc(sizeof(pthread_mutex_t) * data->nbr_phi);
@@ -249,25 +243,17 @@ void	init_thread(t_data *data, t_philo_thread *threads)
 			{
 				ret = pthread_create(&threads[i].thread_id, NULL, philo_do_even, (void *) &threads[i]);
 				if (ret)
-				{
-					printf("ERROR; return (code from pthread_create() is %d\n", ret);
-					exit(-1);
-				}
+					exit_error_message("ERROR: pthread_create()\n");
 			}
 			else
 			{
 				usleep(1000);
 				ret = pthread_create(&threads[i].thread_id, NULL, philo_do_odd, (void *) &threads[i]);
 				if (ret)
-				{
-					printf("ERROR; return (code from pthread_create() is %d\n", ret);
-					exit(-1);
-				}
-
+					exit_error_message("ERROR: pthread_create()\n");
 			}
 			i++;
 	}
-
 }
 
 void	join_and_destroy(t_data *data, t_philo_thread *threads)

@@ -6,7 +6,7 @@
 /*   By: smortemo <smortemo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 21:00:12 by smortemo          #+#    #+#             */
-/*   Updated: 2024/07/12 10:20:19 by smortemo         ###   ########.fr       */
+/*   Updated: 2024/07/12 11:44:01 by smortemo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,12 @@ int len_str_num(char *str)
 
     len = 0;
     i = 0;
+    if(str[i] == '-')
+        len++;
+    while(str[i] == '0' || str[i] == '+' )
+        i++;
     while(str[i])
     {
-        if(str[i] == '-')
-            len++;
         if(str[i] >= '0' && str[i] <= '9')
          len++;
         i++;
@@ -45,38 +47,29 @@ int len_str_num(char *str)
     return(len);
 }
 
-int	ft_atoi(char *str)
+int	ft_atoi_philo(char *str)
 {
 	int	i;
 	int	num;
-	int	sign;
 
-	sign = 1;
 	num = 0;
 	i = 0;
 	while ((str[i] >= 9 && str[i] <= 13) || str[i] == 32)
 		i++;
-	if (str[i] == 45 || str[i] == 43)
-	{
-		if (str[i] == 45)
-			sign = -1;
+	if (str[i] == '+')
 		i++;
-	}
 	while (str[i] >= '0' && str[i] <= '9')
 		num = num * 10 + (str[i++] - 48);
-	printf(" num %d \n", num);
-
     if (len_str_num(str) != len_num(num))
-	{
-		printf("overflow\n");
-		exit (1);
-	}
-	return (sign * num);
+	    exit_error_message("Value not conform -> overflow\n");
+    if(num == 0)
+		exit_error_message("Value not conform -> args must be > 0\n");
+	return (num);
 }
 
-long long	ft_atol_unsigned(const char *str)
+long long	ft_atol_unsigned_philo(char *str)
 {
-	long long	i;
+	unsigned long	i;
 	unsigned long	num;
 	int			sign;
 
@@ -87,11 +80,10 @@ long long	ft_atol_unsigned(const char *str)
 		i++;
 	while (str[i] >= '0' && str[i] <= '9')
 		num = num * 10 + (str[i++] - 48);
-	if (num > 2147483647)
-	{
-		printf("overflow %li", num);
-		exit (1);
-	}
+	if (len_str_num(str) != len_num(num))
+	    exit_error_message("Value not conform -> overflow\n");
+    if(num == 0)
+		exit_error_message("Value not conform -> args must be > 0\n");
 	return (num);
 }
 
@@ -145,36 +137,34 @@ void	check_validity(char *str)
 	while (str[i] != '\0')
 	{
 		if (ft_is_sign('-', str[i]))
-			exit_error_message("a value is not conform -> an arg is negative\n");
+			exit_error_message("Value not conform\n");
 		if (ft_is_sign('+', str[i]) && (!str[i + 1] || ft_isdigit(str[i - 1]) != 0))
-			exit_error_message("a value is not conform\n");
+			exit_error_message("Value not conform\n");
 		else if (ft_is_sign('+', str[i]) && str[i + 1] == ' ')
-			exit_error_message("a value is not conform\n");
+			exit_error_message("Value not conform\n");
 		else if (ft_is_sign('+', str[i]) && ft_is_sign('+', str[i + 1]))
-			exit_error_message("a value is not conform-> ++\n");
+			exit_error_message("Value not conform\n");
 		else if (ft_isother(str[i]) == 1)
-			exit_error_message("a value is not conform-> an arg is not a number\n");
+			exit_error_message("Value not conform -> args must be integers\n");
 		i++;
 	}
 }
 
 void	check_space_arg(char *argv)
 {
-
 	int	i;
 
 	i = 0;
 	while (argv[i] == ' ')
 			i++;
 	if (i == (int)ft_strlen(argv))
-			exit_error_message("a value is not conform -> arg without a value\n");
+			exit_error_message("Value not conform -> arg without a value\n");
 }
 
 void	check_empty_arg(char *argv)
 {
 	if (!argv[0])
-		exit_error_message("a value is not conform -> empty arg\n");
-
+		exit_error_message("Value not conform -> empty arg\n");
 }
 
 void philo_check_args(char **argv)
@@ -188,6 +178,5 @@ void philo_check_args(char **argv)
 		check_space_arg(argv[i]);
 		check_validity(argv[i]);
 		i++;
-	}
-	
+	}	
 }
