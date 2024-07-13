@@ -6,7 +6,7 @@
 /*   By: smortemo <smortemo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 18:12:56 by smortemo          #+#    #+#             */
-/*   Updated: 2024/07/13 22:55:23 by smortemo         ###   ########.fr       */
+/*   Updated: 2024/07/13 23:50:57 by smortemo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,11 +71,20 @@ void	philo_eat(t_philo_thread *thread_n, pthread_mutex_t *forks, int fisrt_fork,
 	thread_n->last_meal = thread_n->start_meal;
 
 	set_value_startmeal_unlong(thread_n, &thread_n->data->mtx_time, meal_start);
-	if(get_value_onedead_bool(thread_n, &thread_n->data->mtx_bool) == TRUE)
+	if(get_value_onedead_bool(thread_n, &thread_n->data->mtx_bool) != TRUE)
 		print_philo(thread_n, &thread_n->data->mtx_print, thread_n->data->start, " ---------------> is eating");
 	usleep(thread_n->data->t_eat * 1000);
-	pthread_mutex_unlock(&forks[second_fork]);
-	pthread_mutex_unlock(&forks[fisrt_fork]);
+	// if(thread_n->phi_num % 2 == 0)
+	// {
+		pthread_mutex_unlock(&forks[second_fork]);
+		pthread_mutex_unlock(&forks[fisrt_fork]);
+	// }
+	// else
+	// {
+		// pthread_mutex_unlock(&forks[fisrt_fork]);
+		// pthread_mutex_unlock(&forks[second_fork]);
+	// }
+	
 }
 
 
@@ -133,7 +142,7 @@ void *philo_is_dead(void *thread_philo)
 }
 
 
-void	*philo_do_even(void *thread_philo_n)
+void	*philo_do(void *thread_philo_n)
 {
 	t_philo_thread *thread_n;
 	int n;
@@ -147,7 +156,6 @@ void	*philo_do_even(void *thread_philo_n)
 	forks = thread_n->data->forks;
 	counter_meals = thread_n->data->nbr_meals;
 	thread_n->last_meal = 0;
-
 	l = n - 1;
 	r =  n % thread_n->data->nbr_phi;
 	while(1)
@@ -161,8 +169,14 @@ void	*philo_do_even(void *thread_philo_n)
 				print_philo(thread_n, &thread_n->data->mtx_print, thread_n->data->start, " has taken a fork");
 				pthread_mutex_lock(&forks[r]);
 				print_philo(thread_n, &thread_n->data->mtx_print, thread_n->data->start, " has taken a fork");
+				// if(get_value_onedead_bool(thread_n, &thread_n->data->mtx_bool) == TRUE)//
+				// {
+				// 	pthread_mutex_unlock(&forks[r]);
+				// 	pthread_mutex_unlock(&forks[l]);
+				// 	return(NULL);
+				// }
 				philo_eat(thread_n, forks, l, r);
-			}
+			}	
 			if(get_value_onedead_bool(thread_n, &thread_n->data->mtx_bool) == TRUE)
 				return(NULL);
 			if (thread_n->meals_are_limited == TRUE)
@@ -181,52 +195,58 @@ void	*philo_do_even(void *thread_philo_n)
 	return (NULL);
 }
 
-void	*philo_do_odd(void *thread_philo_n)
-{
-	t_philo_thread *thread_n;
-	int n;
-	pthread_mutex_t *forks;
-	int counter_meals;
-	int l;
-	int r;
+// void	*philo_do_odd(void *thread_philo_n)
+// {
+// 	t_philo_thread *thread_n;
+// 	int n;
+// 	pthread_mutex_t *forks;
+// 	int counter_meals;
+// 	int l;
+// 	int r;
 
-	thread_n = (t_philo_thread *) thread_philo_n;
-	n = thread_n->phi_num;
-	forks = thread_n->data->forks;
-	counter_meals = thread_n->data->nbr_meals;
-	thread_n->last_meal = 0;
-	l = n - 1;
-	r =  n % thread_n->data->nbr_phi;
-	while(1)
-	{
-		if(get_value_onedead_bool(thread_n, &thread_n->data->mtx_bool) == TRUE)
-			return(NULL);
-		if(get_value_onedead_bool(thread_n, &thread_n->data->mtx_bool) != TRUE)
-		{
-			print_philo(thread_n, &thread_n->data->mtx_print, thread_n->data->start, " is thinking");
-			pthread_mutex_lock(&forks[r]);
-			print_philo(thread_n, &thread_n->data->mtx_print, thread_n->data->start, " has taken a fork");
-			pthread_mutex_lock(&forks[l]);
-			print_philo(thread_n, &thread_n->data->mtx_print, thread_n->data->start, " has taken a fork");
-			philo_eat(thread_n, forks, r, l);
-		}
-		if(get_value_onedead_bool(thread_n, &thread_n->data->mtx_bool) == TRUE)
-			return(NULL);
-		if (thread_n->meals_are_limited == TRUE)
-			counter_meals--;
-		if(counter_meals == 0)
-		{
-			thread_n->is_full = TRUE;
-			print_philo(thread_n, &thread_n->data->mtx_print, thread_n->data->start, " PHILOSOPHER IS FULL");
-			return (NULL);
-		}
-		if(get_value_onedead_bool(thread_n, &thread_n->data->mtx_bool) == TRUE)
-			return(NULL);;
-		print_philo(thread_n, &thread_n->data->mtx_print, thread_n->data->start, " is sleeping");
-		usleep(thread_n->data->t_sleep * 1000);
-	}
-	return (NULL);
-}
+// 	thread_n = (t_philo_thread *) thread_philo_n;
+// 	n = thread_n->phi_num;
+// 	forks = thread_n->data->forks;
+// 	counter_meals = thread_n->data->nbr_meals;
+// 	thread_n->last_meal = 0;
+// 	l = n - 1;
+// 	r =  n % thread_n->data->nbr_phi;
+// 	while(1)
+// 	{
+// 		if(get_value_onedead_bool(thread_n, &thread_n->data->mtx_bool) == TRUE)
+// 			return(NULL);
+// 		if(get_value_onedead_bool(thread_n, &thread_n->data->mtx_bool) != TRUE)
+// 		{
+// 			print_philo(thread_n, &thread_n->data->mtx_print, thread_n->data->start, " is thinking");
+// 			pthread_mutex_lock(&forks[r]);
+// 			print_philo(thread_n, &thread_n->data->mtx_print, thread_n->data->start, " has taken a fork");
+// 			pthread_mutex_lock(&forks[l]);
+// 			print_philo(thread_n, &thread_n->data->mtx_print, thread_n->data->start, " has taken a fork");
+// 			if(get_value_onedead_bool(thread_n, &thread_n->data->mtx_bool) == TRUE)//
+// 			{
+// 				pthread_mutex_unlock(&forks[l]);
+// 				pthread_mutex_unlock(&forks[r]);
+// 				return(NULL);
+// 			}
+// 			philo_eat(thread_n, forks, r, l);
+// 		}
+// 		if(get_value_onedead_bool(thread_n, &thread_n->data->mtx_bool) == TRUE)
+// 			return(NULL);
+// 		if (thread_n->meals_are_limited == TRUE)
+// 			counter_meals--;
+// 		if(counter_meals == 0)
+// 		{
+// 			thread_n->is_full = TRUE;
+// 			print_philo(thread_n, &thread_n->data->mtx_print, thread_n->data->start, " PHILOSOPHER IS FULL");
+// 			return (NULL);
+// 		}
+// 		if(get_value_onedead_bool(thread_n, &thread_n->data->mtx_bool) == TRUE)
+// 			return(NULL);;
+// 		print_philo(thread_n, &thread_n->data->mtx_print, thread_n->data->start, " is sleeping");
+// 		usleep(thread_n->data->t_sleep * 1000);
+// 	}
+// 	return (NULL);
+// }
 
 void init_data(t_data *data, char **argv)
 {
@@ -280,7 +300,7 @@ void	init_thread(t_data *data, t_philo_thread *threads)
 	{
 		if( i == 0 || i % 2 == 0)
 		{
-			ret = pthread_create(&threads[i].thread_id, NULL, philo_do_even, (void *) &threads[i]);
+			ret = pthread_create(&threads[i].thread_id, NULL, philo_do, (void *) &threads[i]);
 			if (ret)
 				exit_error_message("ERROR: pthread_create()\n");
 		}
@@ -292,7 +312,7 @@ void	init_thread(t_data *data, t_philo_thread *threads)
 	{
 		if( i % 2 != 0)
 		{
-			ret = pthread_create(&threads[i].thread_id, NULL, philo_do_odd, (void *) &threads[i]);
+			ret = pthread_create(&threads[i].thread_id, NULL, philo_do, (void *) &threads[i]);
 			if (ret)
 				exit_error_message("ERROR: pthread_create()\n");
 		}
@@ -342,6 +362,7 @@ int main(int argc, char **argv)
 	init_mutex(&data);
 	init_thread(&data, threads);
 	philo_is_dead(threads);
+
 	join_and_destroy(&data, threads);
 	free(threads);
 	free(data.forks);

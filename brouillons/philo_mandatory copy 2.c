@@ -1,17 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo_mandatory.c                                  :+:      :+:    :+:   */
+/*   philo_mandatory copy 2.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: smortemo <smortemo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 18:12:56 by smortemo          #+#    #+#             */
-/*   Updated: 2024/06/28 16:30:25 by smortemo         ###   ########.fr       */
+/*   Updated: 2024/07/13 23:06:30 by smortemo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "struct.h"
 
+	// printf("[%li]  ", get_timestamp_millisec( thread->data->start));
+	// printf("P%d %s\n", thread[i].phi_num, "XXXXXXXXXXX PHILOSOPHER IS DEAD XXXXXXXXXXXXxxx");
 
 unsigned long	get_time_millisec(void)
 {
