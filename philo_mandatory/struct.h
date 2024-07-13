@@ -6,7 +6,7 @@
 /*   By: smortemo <smortemo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 18:30:39 by smortemo          #+#    #+#             */
-/*   Updated: 2024/07/12 13:06:06 by smortemo         ###   ########.fr       */
+/*   Updated: 2024/07/13 22:37:58 by smortemo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,8 @@ struct s_philo_thread{
 	t_bool			*one_dead;
 	t_bool			is_full;
 };
+
+t_bool	get_value_onedead_bool(t_philo_thread *thread, pthread_mutex_t *mtx);
 
 unsigned long	get_time_millisec(void);
 unsigned long	get_timestamp_millisec(unsigned long start_milli);
