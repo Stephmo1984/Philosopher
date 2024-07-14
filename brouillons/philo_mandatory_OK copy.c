@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo_mandatory_OK.c                               :+:      :+:    :+:   */
+/*   philo_mandatory_OK copy.c                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: smortemo <smortemo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 18:12:56 by smortemo          #+#    #+#             */
-/*   Updated: 2024/07/14 14:57:15 by smortemo         ###   ########.fr       */
+/*   Updated: 2024/07/14 15:06:05 by smortemo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,15 @@ void	philo_eat(t_philo_thread *thread_n, pthread_mutex_t *forks, int first_fork,
 	
 	meal_start = get_timestamp_millisec(thread_n->start_simu);
 	thread_n->last_meal = thread_n->start_meal;
+
 	set_value_startmeal_unlong(thread_n, &thread_n->data->mtx_time, meal_start);
 	if(get_value_onedead_bool(thread_n, &thread_n->data->mtx_bool) != TRUE)
-		print_philo(thread_n, &thread_n->data->mtx_print, thread_n->data->start, " is eating");
+		print_philo(thread_n, &thread_n->data->mtx_print, thread_n->data->start, " ---------------> is eating");
 	usleep(thread_n->data->t_eat * 1000);
 	pthread_mutex_unlock(&forks[second_fork]);
 	pthread_mutex_unlock(&forks[first_fork]);
 }
+
 
 void philo_is_dead(t_philo_thread *thread, int nbr_phi, unsigned long death, int count)
 {
@@ -47,7 +49,7 @@ void philo_is_dead(t_philo_thread *thread, int nbr_phi, unsigned long death, int
 			{
 				time_stamp = get_timestamp_millisec(thread[i].start_simu);
 				if (time_stamp - get_value_startmeal_unlong(&thread[i], &thread[i].data->mtx_time) > death)
-					return (philo_dead(&thread[i], &thread->data->mtx_print, thread[i].start_simu));
+					return (print_philo_dead(&thread[i], &thread->data->mtx_print, thread[i].start_simu));
 			}
 			i++;
 		}
@@ -55,44 +57,47 @@ void philo_is_dead(t_philo_thread *thread, int nbr_phi, unsigned long death, int
 	}
 }
 
-void	philo_take_forks(t_philo_thread *thread, pthread_mutex_t *forks, int l, int r)
-{
-		print_philo(thread, &thread->data->mtx_print, thread->data->start, " is thinking");
-		pthread_mutex_lock(&forks[l]);
-		print_philo(thread, &thread->data->mtx_print, thread->data->start, " has taken a fork");
-		pthread_mutex_lock(&forks[r]);
-		print_philo(thread, &thread->data->mtx_print, thread->data->start, " has taken a fork");
-		philo_eat(thread, forks, l, r);
-}
-
 void	*philo_do(void *thread_philo_n)
 {
 	t_philo_thread *thread_n;
-	pthread_mutex_t *forks;	
+	int n;
+	pthread_mutex_t *forks;
+	int counter_meals;
 	int l;
 	int r;
 
 	thread_n = (t_philo_thread *) thread_philo_n;
+	n = thread_n->phi_num;
 	forks = thread_n->data->forks;
-	l = thread_n->phi_num - 1;
-	r =  thread_n->phi_num % thread_n->data->nbr_phi;
+	counter_meals = thread_n->data->nbr_meals;
+	thread_n->last_meal = 0;
+	l = n - 1;
+	r =  n % thread_n->data->nbr_phi;
 	while(1)
 	{
 			if(get_value_onedead_bool(thread_n, &thread_n->data->mtx_bool) == TRUE)
-				return (NULL);
-			else
+				return(NULL);
+			if(get_value_onedead_bool(thread_n, &thread_n->data->mtx_bool) != TRUE)
 			{
-				if( thread_n->phi_num  == 0 || thread_n->phi_num  % 2 == 0)
-					philo_take_forks(thread_n, forks, l, r);
-				else
-					philo_take_forks(thread_n, forks, r, l);
-			}
-			if (thread_n->meals_are_limited == TRUE)
-				thread_n->counter_meals--;
-			if(thread_n->counter_meals == 0)
-				return (philo_full(thread_n, &thread_n->data->mtx_print, thread_n->data->start));
+				print_philo( thread_n, &thread_n->data->mtx_print, thread_n->data->start, " is thinking");
+				pthread_mutex_lock(&forks[l]);
+				print_philo(thread_n, &thread_n->data->mtx_print, thread_n->data->start, " has taken a fork");
+				pthread_mutex_lock(&forks[r]);
+				print_philo(thread_n, &thread_n->data->mtx_print, thread_n->data->start, " has taken a fork");
+				philo_eat(thread_n, forks, l, r);
+			}	
 			if(get_value_onedead_bool(thread_n, &thread_n->data->mtx_bool) == TRUE)
+				return(NULL);
+			if (thread_n->meals_are_limited == TRUE)
+				counter_meals--;
+			if(counter_meals == 0)
+			{
+				thread_n->is_full = TRUE;
+				print_philo(thread_n, &thread_n->data->mtx_print, thread_n->data->start, " PHILOSOPHER IS FULL");
 				return (NULL);
+			}
+			if(get_value_onedead_bool(thread_n, &thread_n->data->mtx_bool) == TRUE)
+				return(NULL);
 			print_philo(thread_n, &thread_n->data->mtx_print, thread_n->data->start, " is sleeping");
 			usleep(thread_n->data->t_sleep * 1000);
 	}
@@ -181,8 +186,6 @@ int main(int argc, char **argv)
 	t_data data;
 	
 // !! faire fonction pour nbr_phi == 1 
-// protections
-// make file
 
 	if (argc < 5)
 		exit_error_message("Not enough args\n");
