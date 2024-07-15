@@ -6,7 +6,7 @@
 /*   By: smortemo <smortemo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/14 12:32:45 by smortemo          #+#    #+#             */
-/*   Updated: 2024/07/15 15:50:08 by smortemo         ###   ########.fr       */
+/*   Updated: 2024/07/15 18:04:24 by smortemo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@ void init_data(t_data *data, char **argv)
 	data->nbr_meals = 1;
 	data->meals_number = FALSE;
 	data->nbr_phi = ft_atoi_philo(argv[1]);
-	if (data->nbr_phi > 124098)
-		exit_error_message("Too many threads (philosophers) -> see: cat /proc/sys/kernel/threads-max\n");     
+	// if (data->nbr_phi > 124098)
+	// 	exit_error_message("Too many threads (philosophers) -> see: cat /proc/sys/kernel/threads-max\n");     
 	data->t_death =  ft_atol_unsigned_philo(argv[2]);
 	data->t_eat=  ft_atol_unsigned_philo(argv[3]);
 	data->t_sleep =  ft_atol_unsigned_philo(argv[4]);

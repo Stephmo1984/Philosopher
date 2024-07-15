@@ -6,7 +6,7 @@
 /*   By: smortemo <smortemo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 18:12:56 by smortemo          #+#    #+#             */
-/*   Updated: 2024/07/15 17:01:05 by smortemo         ###   ########.fr       */
+/*   Updated: 2024/07/15 17:59:28 by smortemo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,17 +82,15 @@ void	*philo_do(void *thread_philo_n)
 			print_philo(thread_n, &thread_n->data->mtx_print, thread_n->data->start, " is thinking");
 			if(get_value_bool(&thread_n->data->mtx_bool, &thread_n->data->one_dead) != TRUE)
 			{
-				if(thread_n->data->nbr_phi % 2 == 0 && thread_n->phi_num % 2 == 0 )
+				if (thread_n->phi_num % 2 == 0 )
 					philo_take_forks(thread_n, forks, l, r);
-				else if (thread_n->data->nbr_phi % 2 == 0 )
-					philo_take_forks(thread_n, forks, r, l);
 				else
 					philo_take_forks(thread_n, forks, r, l);
+				if (thread_n->meals_are_limited == TRUE)
+					thread_n->counter_meals--;
+				if(thread_n->counter_meals == 0)
+					return (philo_full(thread_n, &thread_n->data->mtx_print, thread_n->data->start));
 			}
-			if (thread_n->meals_are_limited == TRUE)
-				thread_n->counter_meals--;
-			if(thread_n->counter_meals == 0)
-				return (philo_full(thread_n, &thread_n->data->mtx_print, thread_n->data->start));
 			if(get_value_bool(&thread_n->data->mtx_bool, &thread_n->data->one_dead) == TRUE)
 				return (NULL);
 			print_philo(thread_n, &thread_n->data->mtx_print, thread_n->data->start, " is sleeping");
@@ -127,30 +125,26 @@ void	*one_philo_do(void *thread_one)
 {
 	t_philo_thread *thread;
 
-	thread = thread_one;
+	thread = (t_philo_thread *) thread_one;
 	usleep(thread->data->t_death * 1000);
-	pthread_mutex_lock(&thread->data->mtx_print);
 	printf("%5li   ", get_timestamp_millisec(thread->data->start));
 	printf("  P%d    dead\n", thread->phi_num);
-	pthread_mutex_unlock(&thread->data->mtx_print);
-	exit (0);
+	return (NULL);
 }
 	
 int	one_philo(t_data data)
 {
-    t_philo_thread *thread;
+    t_philo_thread *threads;
 
-	thread = malloc(sizeof(t_philo_thread) * 1);// protections
-	pthread_mutex_init(&data.mtx_print, NULL);// protections
-	pthread_mutex_init(&data.mtx_time, NULL);// protections
-	pthread_mutex_init(&data.mtx_bool, NULL);// protections
-	init_mutex(&data);// protections
-	if(pthread_create(&thread[0].thread_id, NULL, one_philo_do, (void *) &thread[0]))
+	threads = malloc(sizeof(t_philo_thread) * 1);// protections
+	init_philo(&data, threads);
+	if(pthread_create(&threads[0].thread_id, NULL, one_philo_do, (void *) &threads[0]))
 		exit_error_message("ERROR: pthread_create()\n");
-	join_and_destroy(&data, thread);// protections
-	free(thread);
+    pthread_join(threads[0].thread_id, NULL);
+	free(threads);
 	free(data.forks);
-	return (0);
+	exit (0);
+
 }
 
 int main(int argc, char **argv) 
@@ -158,8 +152,7 @@ int main(int argc, char **argv)
 	int nbr_of_chairs;
     t_philo_thread *threads;
 	t_data data;
-	
-// !! faire fonction pour nbr_phi == 1 
+
 // protections
 // make file
 
