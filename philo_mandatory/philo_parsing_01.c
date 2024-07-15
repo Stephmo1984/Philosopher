@@ -6,12 +6,38 @@
 /*   By: smortemo <smortemo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 21:00:12 by smortemo          #+#    #+#             */
-/*   Updated: 2024/07/14 13:43:03 by smortemo         ###   ########.fr       */
+/*   Updated: 2024/07/15 16:00:11 by smortemo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "struct.h"
+# include "parsing.h"
 
+int len_str_or_num(char *str, long long num, int len)
+{
+    size_t i;
+
+    i = 0;
+	if (!num)
+	{
+		while (str[i] == ' ' || str[i] == '0' || str[i] == '+' )
+       		i++;
+		while (str[i])
+		{
+			if (str[i] >= '0' && str[i] <= '9')
+				len++;
+			i++;
+		}
+ 	   return(len);
+	}
+	if (num < 0)
+    	len++;
+	while (num)
+	{
+		num = num/10;
+		len++;
+	}
+    return(len);
+}
 
 int len_num(long long num)
 {
@@ -63,14 +89,14 @@ int	ft_atoi_philo(char *str)
 		i++;
 	while (str[i] >= '0' && str[i] <= '9')
 		num = num * 10 + (str[i++] - 48);
-    if (len_str_num(str) != len_num(num))
+    if (len_str_or_num(str, 0, 0) != len_str_or_num(NULL, num, 0))
 	    exit_error_message("Value not conform -> overflow\n");
     if (num == 0)
 		exit_error_message("Value not conform -> args must be > 0\n");
 	return (num);
 }
 
-long long	ft_atol_unsigned_philo(char *str)
+unsigned long	ft_atol_unsigned_philo(char *str)
 {
 	unsigned long	i;
 	unsigned long	num;
@@ -85,7 +111,9 @@ long long	ft_atol_unsigned_philo(char *str)
 		i++;
 	while (str[i] >= '0' && str[i] <= '9')
 		num = num * 10 + (str[i++] - 48);
-	if (len_str_num(str) != len_num(num))
+	// if (len_str_num(str) != len_num(num))
+	//     exit_error_message("Value not conform -> overflow\n");
+	if (len_str_or_num(str, 0, 0) != len_str_or_num(NULL, num, 0))
 	    exit_error_message("Value not conform -> overflow\n");
     if (num == 0)
 		exit_error_message("Value not conform -> args must be > 0\n");

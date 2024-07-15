@@ -6,7 +6,7 @@
 /*   By: smortemo <smortemo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 18:30:39 by smortemo          #+#    #+#             */
-/*   Updated: 2024/07/14 14:17:04 by smortemo         ###   ########.fr       */
+/*   Updated: 2024/07/15 15:40:10 by smortemo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,9 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <sys/time.h>
+
+# include "parsing.h"
+
 
 typedef struct s_philo_thread t_philo_thread;
 typedef struct s_data t_data;
@@ -61,45 +64,37 @@ struct s_philo_thread{
 	int 			counter_meals;
 };
 
-// PHILO_PARSING_01 ---------------------------------------------------------------
-int len_num(long long num);
-int len_str_num(char *str);
-int	ft_atoi_philo(char *str);
-long long	ft_atol_unsigned_philo(char *str);
-void philo_check_args(char **argv);
-
-
-// PHILO_PARSING_02 ---------------------------------------------------------------
-size_t	ft_strlen(const char *str);
-int	ft_isdigit(int c);
-int	ft_is_sign(char sign, char c);
-int	ft_isother(int c);
-void	check_validity(char *str);
-
 
 // MAIN
 void	*philo_do(void *thread_philo_n);
+void	*philo_do_test(void *thread_philo_n);
 
 
-// PHILO_UTILS --------------------------------------------------------------
-void	exit_error_message(char *str);
+// PHILO_TIME --------------------------------------------------------------
 unsigned long	get_time_millisec(void);
 unsigned long	get_timestamp_millisec(unsigned long start_milli);
-void	print_philo(t_philo_thread *thread, pthread_mutex_t *mtx_print, long long start, char *str);
-void	philo_dead(t_philo_thread *thread, pthread_mutex_t *mtx_print, long long start);
-void	*philo_full(t_philo_thread *thread, pthread_mutex_t *mtx_print, long long start);
 
+// PHILO_UTILS --------------------------------------------------------------
+void			exit_error_message(char *str);
+void			print_philo(t_philo_thread *thread, pthread_mutex_t *mtx_print, long long start, char *str);
+void			philo_dead(t_philo_thread *thread, pthread_mutex_t *mtx_print, long long start);
+void			*philo_full(t_philo_thread *thread, pthread_mutex_t *mtx_print, long long start);
 
 // PHILO_GET_SET -------------------------------------------------------------
-t_bool	get_value_onedead_bool(t_philo_thread *thread, pthread_mutex_t *mtx);
-t_bool	get_value_isfull_bool(t_philo_thread *thread, pthread_mutex_t *mtx);
 unsigned long	get_value_startmeal_unlong(t_philo_thread *thread, pthread_mutex_t *mtx);
-void	set_value_onedead_bool(t_philo_thread *thread, pthread_mutex_t *mtx, t_bool value);
-void	set_value_startmeal_unlong(t_philo_thread *thread, pthread_mutex_t *mtx, unsigned long value);
-void	set_value_isfull_bool(t_philo_thread *thread, pthread_mutex_t *mtx, t_bool value);
+void			set_value_startmeal_unlong(t_philo_thread *thread, pthread_mutex_t *mtx, unsigned long value);
+// void			set_value_bool(t_philo_thread *thread, pthread_mutex_t *mtx, char c, t_bool value);
+// t_bool			get_value_bool(t_philo_thread *thread, pthread_mutex_t *mtx, char c);
+unsigned long	get_value_unlong(pthread_mutex_t *mtx, unsigned long *to_get);
+t_bool			get_value_bool(pthread_mutex_t *mtx, t_bool *to_get);
+void			set_value_bool(pthread_mutex_t *mtx, t_bool *to_modify, t_bool value);
+void			set_value_unlong(pthread_mutex_t *mtx, unsigned long *to_modify, unsigned long value);
+
+
+
 
 // PHILO_INIT ---------------------------------------------------------------
-void init_data(t_data *data, char **argv);
+void 	init_data(t_data *data, char **argv);
 void	init_philo(t_data *data, t_philo_thread *threads);
 void	init_mutex(t_data *data);
 void	init_thread(t_data *data, t_philo_thread *threads);

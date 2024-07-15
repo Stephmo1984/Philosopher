@@ -6,7 +6,7 @@
 /*   By: smortemo <smortemo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 16:44:59 by smortemo          #+#    #+#             */
-/*   Updated: 2024/07/14 15:04:43 by smortemo         ###   ########.fr       */
+/*   Updated: 2024/07/15 16:58:29 by smortemo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,29 +18,9 @@ void	exit_error_message(char *str)
 	exit (1);
 }
 
-unsigned long	get_time_millisec(void)
-{
-	struct timeval time;
-	unsigned long time_usec;
-	
-	gettimeofday(&time, NULL);
-	time_usec = ((time.tv_sec * 1000000) + time.tv_usec);
-	return (time_usec / 1000);
-}
-
-unsigned long	get_timestamp_millisec(unsigned long start_milli)
-{
-	struct timeval time;
-	unsigned long time_millisec;
-
-	gettimeofday(&time, NULL);
-	time_millisec = ((time.tv_sec * 1000000) + time.tv_usec) / 1000;
-	return (time_millisec - start_milli);
-}
-
 void	print_philo(t_philo_thread *thread, pthread_mutex_t *mtx_print, long long start, char *str)
 {
-	if(get_value_onedead_bool(thread, &thread->data->mtx_bool) == TRUE)
+	if(get_value_bool(&thread->data->mtx_bool, &thread->data->one_dead) == TRUE)
 		return ;
 	pthread_mutex_lock(mtx_print);
 	printf("%5li   ", get_timestamp_millisec(start));
@@ -50,7 +30,7 @@ void	print_philo(t_philo_thread *thread, pthread_mutex_t *mtx_print, long long s
 
 void	philo_dead(t_philo_thread *thread, pthread_mutex_t *mtx_print, long long start)
 {
-	set_value_onedead_bool(thread, &thread->data->mtx_bool, TRUE);
+	set_value_bool(&thread->data->mtx_bool, &thread->data->one_dead, TRUE);
 	pthread_mutex_lock(mtx_print);
 	printf("%5li   ", get_timestamp_millisec(start));
 	printf("  P%d    dead\n", thread->phi_num);
@@ -59,7 +39,9 @@ void	philo_dead(t_philo_thread *thread, pthread_mutex_t *mtx_print, long long st
 
 void	*philo_full(t_philo_thread *thread, pthread_mutex_t *mtx_print, long long start)
 {
-	set_value_isfull_bool(thread, &thread->data->mtx_bool, TRUE);
+	set_value_bool(&thread->data->mtx_bool, &thread->is_full, TRUE);
+	// if(get_value_bool(&thread->data->mtx_bool, &thread->data->one_dead) == TRUE)
+	// 	return (NULL);
 	pthread_mutex_lock(mtx_print);
 	printf("%5li   ", get_timestamp_millisec(start));
 	printf("  P%d    PHILOSOPHER IS FULL\n", thread->phi_num);

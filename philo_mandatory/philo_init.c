@@ -6,7 +6,7 @@
 /*   By: smortemo <smortemo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/14 12:32:45 by smortemo          #+#    #+#             */
-/*   Updated: 2024/07/14 15:09:45 by smortemo         ###   ########.fr       */
+/*   Updated: 2024/07/15 15:50:08 by smortemo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void	init_mutex(t_data *data)
 	i = 0;
 	while (i < data->nbr_phi)
 	{
-		pthread_mutex_init(&data->forks[i], NULL);
+		pthread_mutex_init(&data->forks[i], NULL);// protections
 		i++;
 	}
 }
@@ -74,7 +74,7 @@ void	init_thread(t_data *data, t_philo_thread *threads)
 	i = 0;
 	while( i < data->nbr_phi )
 	{
-		if( i == 0 || i % 2 == 0)
+		if(i % 2 == 0)
 		{
 			if(pthread_create(&threads[i].thread_id, NULL, philo_do, (void *) &threads[i]))
 				exit_error_message("ERROR: pthread_create()\n");

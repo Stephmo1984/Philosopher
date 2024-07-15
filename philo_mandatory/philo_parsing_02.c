@@ -6,11 +6,13 @@
 /*   By: smortemo <smortemo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 21:00:12 by smortemo          #+#    #+#             */
-/*   Updated: 2024/07/14 13:20:34 by smortemo         ###   ########.fr       */
+/*   Updated: 2024/07/14 21:05:37 by smortemo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "struct.h"
+// # include "struct.h"
+# include "parsing.h"
+
 
 size_t	ft_strlen(const char *str)
 {
